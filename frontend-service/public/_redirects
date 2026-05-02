@@ -1,0 +1,3 @@
+# Netlify / static hosting redirects
+# Ensures React Router handles all routes correctly
+/*    /index.html    200

@@ -1,0 +1,9 @@
+# Allow all crawlers
+User-agent: *
+Disallow:
+
+# Disallow admin paths from search engines
+User-agent: *
+Disallow: /admin
+
+Sitemap: https://nexacore.com/sitemap.xml
