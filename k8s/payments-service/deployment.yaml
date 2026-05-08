@@ -90,12 +90,12 @@ spec:
             httpGet:
               path: /health
               port: 3004
-              initialDelaySeconds: 10
-              periodSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /health
               port: 3004
-              initialDelaySeconds: 15
-              periodSeconds: 20  
+            initialDelaySeconds: 15
+            periodSeconds: 20  
   
