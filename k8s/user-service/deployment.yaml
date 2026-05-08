@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: user-service
+  namespace: nexacore
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      serviceAccountName: nexacore-sa
+      containers:
+        - name: user-service
+          image: nexacoreregistry.azurecr.io/user-service:v1
+          ports:
+            - containerPort: 3002
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          env:
+            - name: PORT
+              value: "3002"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: NODE_ENV
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: DB_PORT
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: DB_NAME_USER
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: DB_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: JWT_SECRET
+            - name: AUTH_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: AUTH_SERVICE_URL
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+              initialDelaySeconds: 10
+              periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+              initialDelaySeconds: 15
+              periodSeconds: 20  
+  

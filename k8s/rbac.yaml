@@ -1,0 +1,36 @@
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount  
+metadata: 
+  name: nexacore-sa
+  namespace: nexacore
+
+---
+
+# Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nexacore-role
+  namespace: nexacore
+rules: 
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nexacore-rolebinding
+  namespace: nexacore
+subjects: 
+  - kind: ServiceAccount
+    name: nexacore-sa
+    namespace: nexacore
+roleRef: 
+  kind: Role
+  name: nexacore-role
+  apiGroup: rbac.authorization.k8s.io
