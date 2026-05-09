@@ -36,11 +36,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user?.role === 'admin') {
-      adminAPI.get('/api/admin/dashboard')
+      adminAPI.get('/dashboard') // ✅ relative
         .then((res) => setOverview(res.data.overview))
         .catch(() => {});
     }
-    notificationsAPI.get('/api/notifications/unread')
+    notificationsAPI.get('/unread') // ✅ relative
       .then((res) => setUnread(res.data.length))
       .catch(() => {});
   }, [user]);
@@ -52,8 +52,6 @@ const Dashboard = () => {
         <p style={styles.welcome}>
           Welcome back, {user?.email} 👋
         </p>
-
-        {/* Stats */}
         <div style={styles.grid}>
           <div style={styles.card}>
             <p style={styles.cardLabel}>Unread Notifications</p>
@@ -80,8 +78,6 @@ const Dashboard = () => {
             </>
           )}
         </div>
-
-        {/* Chart */}
         <div style={styles.chartCard}>
           <p style={styles.chartTitle}>Platform Activity (Sample)</p>
           <ResponsiveContainer width="100%" height={280}>

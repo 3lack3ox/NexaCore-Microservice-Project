@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// Base API clients for each service
-const createClient = (baseURL) => {
-  const client = axios.create({ baseURL });
+// Base API clients using relative paths
+// Nginx on Kubernetes handles proxying to the correct backend service
+const createClient = (basePath) => {
+  const client = axios.create({ baseURL: basePath });
 
   // Attach token to every request
   client.interceptors.request.use((config) => {
@@ -29,10 +30,11 @@ const createClient = (baseURL) => {
   return client;
 };
 
-export const authAPI = createClient(process.env.REACT_APP_AUTH_SERVICE_URL);
-export const userAPI = createClient(process.env.REACT_APP_USER_SERVICE_URL);
-export const billingAPI = createClient(process.env.REACT_APP_BILLING_SERVICE_URL);
-export const paymentsAPI = createClient(process.env.REACT_APP_PAYMENTS_SERVICE_URL);
-export const notificationsAPI = createClient(process.env.REACT_APP_NOTIFICATIONS_SERVICE_URL);
-export const analyticsAPI = createClient(process.env.REACT_APP_ANALYTICS_SERVICE_URL);
-export const adminAPI = createClient(process.env.REACT_APP_ADMIN_SERVICE_URL);
+// All paths are relative - Nginx proxies them to the correct backend service
+export const authAPI         = createClient('/api/auth');
+export const userAPI         = createClient('/api/users');
+export const billingAPI      = createClient('/api/billing');
+export const paymentsAPI     = createClient('/api/payments');
+export const notificationsAPI = createClient('/api/notifications');
+export const analyticsAPI    = createClient('/api/analytics');
+export const adminAPI        = createClient('/api/admin');

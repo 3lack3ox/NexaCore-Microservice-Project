@@ -27,11 +27,11 @@ const AdminPanel = () => {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    adminAPI.get('/api/admin/dashboard')
+    adminAPI.get('/dashboard') // ✅ relative
       .then((res) => setOverview(res.data.overview))
       .catch(() => {});
 
-    adminAPI.get('/api/admin/dashboard/health')
+    adminAPI.get('/dashboard/health') // ✅ relative
       .then((res) => setServices(res.data.services))
       .catch(() => {});
   }, []);
@@ -41,8 +41,6 @@ const AdminPanel = () => {
       <Navbar />
       <div style={styles.content}>
         <h2 style={styles.title}>Admin Panel</h2>
-
-        {/* Overview Stats */}
         {overview && (
           <div style={styles.grid}>
             <div style={styles.card}>
@@ -67,8 +65,6 @@ const AdminPanel = () => {
             </div>
           </div>
         )}
-
-        {/* Service Health */}
         <div style={styles.card}>
           <p style={styles.cardTitle}>Services Health</p>
           {services.map((s) => (

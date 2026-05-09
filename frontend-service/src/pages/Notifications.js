@@ -44,14 +44,14 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    notificationsAPI.get('/api/notifications')
+    notificationsAPI.get('/') // ✅ relative
       .then((res) => setNotifications(res.data))
       .catch(() => {});
   }, []);
 
   const markAsRead = async (id) => {
     try {
-      await notificationsAPI.patch(`/api/notifications/${id}/read`);
+      await notificationsAPI.patch(`/${id}/read`); // ✅ relative
       setNotifications((prev) =>
         prev.map((n) => n.id === id ? { ...n, isRead: true } : n)
       );
@@ -62,7 +62,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await notificationsAPI.patch('/api/notifications/read-all');
+      await notificationsAPI.patch('/read-all'); // ✅ relative
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       toast.success('All notifications marked as read');
     } catch {

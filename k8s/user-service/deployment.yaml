@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: user-service
-          image: nexacoreregistry.azurecr.io/user-service:v1
+          image: nexacoreregistry.azurecr.io/user-service:v2
           ports:
             - containerPort: 3002
           resources:

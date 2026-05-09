@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: payments-service
-          image: nexacoreregistry.azurecr.io/payments-service:v1
+          image: nexacoreregistry.azurecr.io/payments-service:v3
           ports:
             - containerPort: 3004
           resources:

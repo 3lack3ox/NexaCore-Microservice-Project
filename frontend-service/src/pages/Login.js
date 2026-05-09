@@ -26,10 +26,7 @@ const styles = {
     color: '#1a1a2e',
     marginBottom: '0.5rem',
   },
-  subtitle: {
-    color: '#666',
-    marginBottom: '2rem',
-  },
+  subtitle: { color: '#666', marginBottom: '2rem' },
   input: {
     width: '100%',
     padding: '0.75rem 1rem',
@@ -73,7 +70,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await authAPI.post('/api/auth/login', form);
+      const res = await authAPI.post('/login', form); // ✅ relative
       login(res.data.user, res.data.token);
       toast.success('Login successful!');
       navigate('/');

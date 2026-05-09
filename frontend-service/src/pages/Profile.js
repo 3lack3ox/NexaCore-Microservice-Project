@@ -18,7 +18,7 @@ const Profile = () => {
   const [hasProfile, setHasProfile] = useState(false);
 
   useEffect(() => {
-    userAPI.get('/api/users/me')
+    userAPI.get('/me') // ✅ relative
       .then((res) => {
         setForm(res.data);
         setHasProfile(true);
@@ -33,10 +33,10 @@ const Profile = () => {
     setLoading(true);
     try {
       if (hasProfile) {
-        await userAPI.put('/api/users/me', form);
+        await userAPI.put('/me', form); // ✅ relative
         toast.success('Profile updated!');
       } else {
-        await userAPI.post('/api/users', form);
+        await userAPI.post('/', form); // ✅ relative
         toast.success('Profile created!');
         setHasProfile(true);
       }

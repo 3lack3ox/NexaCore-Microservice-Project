@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: billing-service
-          image: nexacoreregistry.azurecr.io/billing-service:v1
+          image: nexacoreregistry.azurecr.io/billing-service:v2
           ports:
             - containerPort: 3003
           resources:

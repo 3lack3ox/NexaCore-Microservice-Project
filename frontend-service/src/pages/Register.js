@@ -25,10 +25,7 @@ const styles = {
     color: '#1a1a2e',
     marginBottom: '0.5rem',
   },
-  subtitle: {
-    color: '#666',
-    marginBottom: '2rem',
-  },
+  subtitle: { color: '#666', marginBottom: '2rem' },
   input: {
     width: '100%',
     padding: '0.75rem 1rem',
@@ -71,7 +68,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await authAPI.post('/api/auth/register', form);
+      await authAPI.post('/register', form); // ✅ relative
       toast.success('Registration successful! Please login.');
       navigate('/login');
     } catch (err) {

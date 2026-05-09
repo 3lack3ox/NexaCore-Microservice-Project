@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: analytics-service
-          image: nexacoreregistry.azurecr.io/analytics-service:v1
+          image: nexacoreregistry.azurecr.io/analytics-service:v2
           ports:
             - containerPort: 3006
           resources:

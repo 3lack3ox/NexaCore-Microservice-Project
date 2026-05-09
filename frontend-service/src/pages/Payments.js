@@ -30,7 +30,7 @@ const Payments = () => {
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    paymentsAPI.get('/api/payments')
+    paymentsAPI.get('/') // ✅ relative
       .then((res) => setPayments(res.data))
       .catch(() => {});
   }, []);

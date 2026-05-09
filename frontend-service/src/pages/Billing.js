@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { billingAPI } from '../config/api';
-import { toast } from 'react-toastify';
 
 const styles = {
   page: { minHeight: '100vh', backgroundColor: '#f0f2f5' },
@@ -32,11 +31,11 @@ const Billing = () => {
   const [plans, setPlans] = useState([]);
 
   useEffect(() => {
-    billingAPI.get('/api/billing/invoices')
+    billingAPI.get('/invoices') // ✅ relative
       .then((res) => setInvoices(res.data))
       .catch(() => {});
 
-    billingAPI.get('/api/billing/plans')
+    billingAPI.get('/plans') // ✅ relative
       .then((res) => setPlans(res.data))
       .catch(() => {});
   }, []);
@@ -46,8 +45,6 @@ const Billing = () => {
       <Navbar />
       <div style={styles.content}>
         <h2 style={styles.title}>Billing & Invoices</h2>
-
-        {/* Plans */}
         <div style={styles.card}>
           <h3 style={{ marginBottom: '1rem', color: '#1a1a2e' }}>Available Plans</h3>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -62,8 +59,6 @@ const Billing = () => {
             {plans.length === 0 && <p style={{ color: '#666' }}>No plans available.</p>}
           </div>
         </div>
-
-        {/* Invoices */}
         <div style={styles.card}>
           <h3 style={{ marginBottom: '1rem', color: '#1a1a2e' }}>My Invoices</h3>
           <table style={styles.table}>

@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: admin-service
-          image: nexacoreregistry.azurecr.io/admin-service:v1
+          image: nexacoreregistry.azurecr.io/admin-service:v2
           ports:
             - containerPort: 3007
           resources:

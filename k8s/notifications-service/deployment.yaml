@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: notifications-service
-          image: nexacoreregistry.azurecr.io/notifications-service:v1
+          image: nexacoreregistry.azurecr.io/notifications-service:v2
           ports:
             - containerPort: 3005
           resources:

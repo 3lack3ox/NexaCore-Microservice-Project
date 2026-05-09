@@ -3,10 +3,22 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const auth = useAuth();
 
-  if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
+  // Handle case where AuthContext is null (provider not yet mounted)
+  if (!auth) {
+    return <div style={{ padding: '2rem' }}>Loading...</div>;
+  }
+
+  const { user, loading } = auth;
+
+  if (loading) {
+    return <div style={{ padding: '2rem' }}>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   return children;
 };

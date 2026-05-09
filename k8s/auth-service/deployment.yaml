@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nexacore-sa
       containers:
         - name: auth-service
-          image: nexacoreregistry.azurecr.io/auth-service:v1
+          image: nexacoreregistry.azurecr.io/auth-service:v2
           ports:
             - containerPort: 3001
           resources:

@@ -13,21 +13,9 @@ const styles = {
     alignItems: 'center',
     color: '#fff',
   },
-  brand: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#e94560',
-  },
-  links: {
-    display: 'flex',
-    gap: '1.5rem',
-    listStyle: 'none',
-  },
-  link: {
-    color: '#fff',
-    fontSize: '0.95rem',
-    transition: 'color 0.2s',
-  },
+  brand: { fontSize: '1.5rem', fontWeight: 'bold', color: '#e94560' },
+  links: { display: 'flex', gap: '1.5rem', listStyle: 'none' },
+  link: { color: '#fff', fontSize: '0.95rem', transition: 'color 0.2s' },
   logoutBtn: {
     backgroundColor: '#e94560',
     color: '#fff',
@@ -44,7 +32,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await authAPI.post('/api/auth/logout');
+      await authAPI.post('/logout'); // ✅ relative
     } catch (_) {}
     logout();
     toast.success('Logged out successfully');
