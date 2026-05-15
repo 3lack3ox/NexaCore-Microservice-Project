@@ -4,6 +4,8 @@ kind: ServiceAccount
 metadata: 
   name: nexacore-sa
   namespace: nexacore
+  annotations: 
+    azure.workload.identity/client-id: "dfd7dcec-002d-474a-b282-c17df1dfd6bd"
 
 ---
 
