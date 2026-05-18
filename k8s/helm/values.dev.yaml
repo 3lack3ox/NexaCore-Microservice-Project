@@ -1,0 +1,47 @@
+# Development environment overrides
+global:
+  registry: nexacoreregistry.azurecr.io
+  namespace: nexacore-dev
+
+# Lower resources for dev
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"
+
+# Lower HPA limits for dev
+hpa:
+  minReplicas: 1
+  maxReplicas: 2
+  cpuUtilization: 70
+  memoryUtilization: 80
+
+# Dev image tags
+services:
+  auth:
+    image:
+      tag: "dev"
+  user:
+    image:
+      tag: "dev"
+  billing:
+    image:
+      tag: "dev"
+  payments:
+    image:
+      tag: "dev"
+  notifications:
+    image:
+      tag: "dev"
+  analytics:
+    image:
+      tag: "dev"
+  admin:
+    image:
+      tag: "dev"
+  frontend:
+    image:
+      tag: "dev"

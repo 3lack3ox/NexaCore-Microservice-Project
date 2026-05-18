@@ -1,0 +1,47 @@
+# Staging environment overrides
+global:
+  registry: nexacoreregistry.azurecr.io
+  namespace: nexacore-staging
+
+# Slightly lower resources than production
+resources:
+  requests:
+    memory: "96Mi"
+    cpu: "75m"
+  limits:
+    memory: "192Mi"
+    cpu: "150m"
+
+# Staging HPA limits
+hpa:
+  minReplicas: 1
+  maxReplicas: 2
+  cpuUtilization: 60
+  memoryUtilization: 75
+
+# Staging image tags
+services:
+  auth:
+    image:
+      tag: "staging"
+  user:
+    image:
+      tag: "staging"
+  billing:
+    image:
+      tag: "staging"
+  payments:
+    image:
+      tag: "staging"
+  notifications:
+    image:
+      tag: "staging"
+  analytics:
+    image:
+      tag: "staging"
+  admin:
+    image:
+      tag: "staging"
+  frontend:
+    image:
+      tag: "staging"

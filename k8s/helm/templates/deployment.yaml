@@ -1,0 +1,147 @@
+{{- range $key, $service := .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.name }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    app: {{ $service.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $service.name }}
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: nexacore-sa
+      containers:
+        - name: {{ $service.name }}
+          image: {{ $.Values.global.registry }}/{{ $service.name }}:{{ $service.image.tag }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy }}
+          ports:
+            - containerPort: {{ $service.port }}
+          resources:
+            requests:
+              memory: {{ $.Values.resources.requests.memory }}
+              cpu: {{ $.Values.resources.requests.cpu }}
+            limits:
+              memory: {{ $.Values.resources.limits.memory }}
+              cpu: {{ $.Values.resources.limits.cpu }}
+          {{- if not $service.isFrontend }}
+          env:
+            {{- range $envName, $envValue := $service.env }}
+            - name: {{ $envName }}
+              value: {{ $envValue | quote }}
+            {{- end }}
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: NODE_ENV
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: {{ $service.dbName }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: DB_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: JWT_SECRET
+            {{- if $service.hasStripe }}
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: STRIPE_SECRET_KEY
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: STRIPE_WEBHOOK_SECRET
+            {{- end }}
+            {{- if $service.hasSmtp }}
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: SMTP_HOST
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: SMTP_USER
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: nexacore-secrets
+                  key: SMTP_PASS
+            - name: EMAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: EMAIL_FROM
+            {{- end }}
+            {{- if $service.serviceUrls }}
+            {{- range $service.serviceUrls }}
+            - name: {{ .name }}
+              valueFrom:
+                configMapKeyRef:
+                  name: nexacore-config
+                  key: {{ .configKey }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if $service.isFrontend }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ $service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ $service.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          {{- else }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ $service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ $service.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          {{- end }}
+---
+{{- end }}

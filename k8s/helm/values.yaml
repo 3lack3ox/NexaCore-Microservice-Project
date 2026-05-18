@@ -1,0 +1,137 @@
+# Global values shared across all services
+global:
+  registry: nexacoreregistry.azurecr.io
+  namespace: nexacore
+
+# Image pull policy
+imagePullPolicy: Always
+
+# Resource defaults
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"
+
+# HPA defaults
+hpa:
+  minReplicas: 1
+  maxReplicas: 3
+  cpuUtilization: 50
+  memoryUtilization: 70
+
+# Services configuration
+services:
+  auth:
+    name: auth-service
+    image:
+      tag: "v2"
+    port: 3001
+    env:
+      PORT: "3001"
+      JWT_EXPIRES_IN: "7d"
+    dbName: DB_NAME_AUTH
+
+  user:
+    name: user-service
+    image:
+      tag: "v2"
+    port: 3002
+    env:
+      PORT: "3002"
+    dbName: DB_NAME_USER
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+
+  billing:
+    name: billing-service
+    image:
+      tag: "v2"
+    port: 3003
+    env:
+      PORT: "3003"
+    dbName: DB_NAME_BILLING
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+      - name: PAYMENTS_SERVICE_URL
+        configKey: PAYMENTS_SERVICE_URL
+
+  payments:
+    name: payments-service
+    image:
+      tag: "v3"
+    port: 3004
+    env:
+      PORT: "3004"
+    dbName: DB_NAME_PAYMENTS
+    hasStripe: true
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+      - name: BILLING_SERVICE_URL
+        configKey: BILLING_SERVICE_URL
+
+  notifications:
+    name: notifications-service
+    image:
+      tag: "v2"
+    port: 3005
+    env:
+      PORT: "3005"
+      SMTP_PORT: "587"
+    dbName: DB_NAME_NOTIFICATIONS
+    hasSmtp: true
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+
+  analytics:
+    name: analytics-service
+    image:
+      tag: "v2"
+    port: 3006
+    env:
+      PORT: "3006"
+    dbName: DB_NAME_ANALYTICS
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+      - name: USER_SERVICE_URL
+        configKey: USER_SERVICE_URL
+      - name: BILLING_SERVICE_URL
+        configKey: BILLING_SERVICE_URL
+      - name: PAYMENTS_SERVICE_URL
+        configKey: PAYMENTS_SERVICE_URL
+
+  admin:
+    name: admin-service
+    image:
+      tag: "v2"
+    port: 3007
+    env:
+      PORT: "3007"
+    dbName: DB_NAME_ADMIN
+    serviceUrls:
+      - name: AUTH_SERVICE_URL
+        configKey: AUTH_SERVICE_URL
+      - name: USER_SERVICE_URL
+        configKey: USER_SERVICE_URL
+      - name: BILLING_SERVICE_URL
+        configKey: BILLING_SERVICE_URL
+      - name: PAYMENTS_SERVICE_URL
+        configKey: PAYMENTS_SERVICE_URL
+      - name: NOTIFICATIONS_SERVICE_URL
+        configKey: NOTIFICATIONS_SERVICE_URL
+      - name: ANALYTICS_SERVICE_URL
+        configKey: ANALYTICS_SERVICE_URL
+
+  frontend:
+    name: frontend-service
+    image:
+      tag: "v4"
+    port: 80
+    isFrontend: true
