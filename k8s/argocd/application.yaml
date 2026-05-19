@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nexacore
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/3lack3ox/NexaCore-Microservice-Project
+    targetRevision: HEAD
+    path: k8s/helm
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nexacore
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

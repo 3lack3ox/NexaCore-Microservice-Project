@@ -135,3 +135,29 @@ services:
       tag: "v4"
     port: 80
     isFrontend: true
+
+# Ingress configuration
+ingress:
+  host: nexacore.20.87.110.204.nip.io
+  routes:
+    - path: /api/auth/
+      service: auth-service
+      port: 3001
+    - path: /api/users/
+      service: user-service
+      port: 3002
+    - path: /api/billing/
+      service: billing-service
+      port: 3003
+    - path: /api/payments/
+      service: payments-service
+      port: 3004
+    - path: /api/notifications/
+      service: notifications-service
+      port: 3005
+    - path: /api/analytics/
+      service: analytics-service
+      port: 3006
+    - path: /api/admin/
+      service: admin-service
+      port: 3007
