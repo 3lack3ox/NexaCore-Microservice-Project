@@ -138,7 +138,7 @@ services:
 
 # Ingress configuration
 ingress:
-  host: nexacore.20.87.110.204.nip.io
+  host: nexacore.20.87.113.204.nip.io
   routes:
     - path: /api/auth/
       service: auth-service
