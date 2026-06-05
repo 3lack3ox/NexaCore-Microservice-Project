@@ -1,0 +1,52 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: nexacore-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: nexacore.rules
+      rules:
+        - alert: NexacorePodHighMemory
+          expr: |
+            (container_memory_working_set_bytes{namespace="nexacore", container!=""} 
+            / container_spec_memory_limit_bytes{namespace="nexacore", container!=""}) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} high memory usage"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using more than 80% of its memory limit for 5 minutes."
+
+        - alert: NexacorePodHighCPU
+          expr: |
+            (rate(container_cpu_usage_seconds_total{namespace="nexacore", container!=""}[5m]) 
+            / container_spec_cpu_quota{namespace="nexacore", container!=""} * container_spec_cpu_period{namespace="nexacore", container!=""}) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} high CPU usage"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using more than 80% of its CPU limit for 5 minutes."
+
+        - alert: NexacorePodRestartingTooMuch
+          expr: |
+            rate(kube_pod_container_status_restarts_total{namespace="nexacore"}[15m]) * 60 * 15 > 3
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} restarting too frequently"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted more than 3 times in the last 15 minutes."
+
+        - alert: NexacorePodNotReady
+          expr: |
+            kube_pod_status_ready{namespace="nexacore", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} not ready"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for more than 5 minutes."

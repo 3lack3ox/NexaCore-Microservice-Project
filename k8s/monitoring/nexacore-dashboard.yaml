@@ -1,0 +1,220 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexacore-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  nexacore-dashboard.json: |
+    {
+      "title": "NexaCore Services",
+      "uid": "nexacore-services",
+      "timezone": "browser",
+      "schemaVersion": 38,
+      "version": 2,
+      "refresh": "30s",
+      "time": { "from": "now-6h", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "title": "CPU Usage per Service",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{namespace=\"nexacore\", container!=\"\", container!=\"POD\"}[5m])",
+              "legendFormat": "{{ container }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 2,
+          "title": "Memory Usage per Service",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{namespace=\"nexacore\", container!=\"\", container!=\"POD\"}",
+              "legendFormat": "{{ container }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 3,
+          "title": "Pod Restart Count",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 12, "x": 0, "y": 8 },
+          "targets": [
+            {
+              "expr": "kube_pod_container_status_restarts_total{namespace=\"nexacore\"}",
+              "legendFormat": "{{ container }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 3 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 4,
+          "title": "Pod Readiness Status",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 12, "x": 12, "y": 8 },
+          "targets": [
+            {
+              "expr": "kube_pod_status_ready{namespace=\"nexacore\", condition=\"true\"}",
+              "legendFormat": "{{ pod }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1 }
+                ]
+              },
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": { "text": "Not Ready", "color": "red" },
+                    "1": { "text": "Ready", "color": "green" }
+                  }
+                }
+              ]
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 5,
+          "title": "Network Receive Bandwidth per Pod",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            {
+              "expr": "rate(container_network_receive_bytes_total{namespace=\"nexacore\"}[5m])",
+              "legendFormat": "{{ pod }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 6,
+          "title": "Network Transmit Bandwidth per Pod",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "targets": [
+            {
+              "expr": "rate(container_network_transmit_bytes_total{namespace=\"nexacore\"}[5m])",
+              "legendFormat": "{{ pod }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 7,
+          "title": "Memory Usage vs Limit",
+          "type": "bargauge",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{namespace=\"nexacore\", container!=\"\", container!=\"POD\"} / on(container, pod, namespace) kube_pod_container_resource_limits{namespace=\"nexacore\", resource=\"memory\"} * 100",
+              "legendFormat": "{{ container }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 60 },
+                  { "color": "red", "value": 80 }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 8,
+          "title": "CPU Usage vs Limit",
+          "type": "bargauge",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{namespace=\"nexacore\", container!=\"\", container!=\"POD\"}[5m]) / on(container, pod, namespace) kube_pod_container_resource_limits{namespace=\"nexacore\", resource=\"cpu\"} * 100",
+              "legendFormat": "{{ container }}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 50 },
+                  { "color": "red", "value": 80 }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        }
+      ]
+    }
